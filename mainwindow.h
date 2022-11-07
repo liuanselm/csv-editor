@@ -25,6 +25,14 @@ private slots:
 
     void on_actionSave_triggered();
 
+    void on_actionAdd_Row_triggered();
+
+    void on_actionAdd_Column_triggered();
+
+    void on_actionRemove_Row_triggered();
+
+    void on_actionRemove_Column_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";

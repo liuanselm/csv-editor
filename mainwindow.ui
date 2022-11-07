@@ -52,6 +52,10 @@
      <string>Edit</string>
     </property>
     <addaction name="actionUndo"/>
+    <addaction name="actionAdd_Row"/>
+    <addaction name="actionAdd_Column"/>
+    <addaction name="actionRemove_Row"/>
+    <addaction name="actionRemove_Column"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -75,6 +79,26 @@
   <action name="actionUndo">
    <property name="text">
     <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionAdd_Row">
+   <property name="text">
+    <string>Add Row</string>
+   </property>
+  </action>
+  <action name="actionAdd_Column">
+   <property name="text">
+    <string>Add Column</string>
+   </property>
+  </action>
+  <action name="actionRemove_Row">
+   <property name="text">
+    <string>Remove Row</string>
+   </property>
+  </action>
+  <action name="actionRemove_Column">
+   <property name="text">
+    <string>Remove Column</string>
    </property>
   </action>
  </widget>

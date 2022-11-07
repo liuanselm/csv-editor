@@ -79,6 +79,9 @@ void MainWindow::on_actionOpen_triggered()
 void MainWindow::on_actionSave_triggered()
 {
     QFile file(currentFile);
+    //clear contents of file to prevent overwriting errors
+    //eventually replace this with better method, this method could be dangerous
+    file.resize(0);
     int rowC = model->rowCount();
     int colC = model->columnCount();
     if (file.open(QIODevice::ReadWrite | QFile::Text)){
@@ -100,5 +103,38 @@ void MainWindow::on_actionSave_triggered()
     }
 
     file.close();
+}
+
+
+void MainWindow::on_actionAdd_Row_triggered()
+{
+    model->insertRow(model->rowCount(QModelIndex()));
+}
+
+
+void MainWindow::on_actionAdd_Column_triggered()
+{
+    model->insertColumn(model->columnCount(QModelIndex()));
+}
+
+
+void MainWindow::on_actionRemove_Row_triggered()
+{
+    QModelIndexList selected = ui->tableView->selectionModel()->selectedRows();
+    while (!selected.isEmpty()){
+        model->removeRows(selected.last().row(),1);
+        selected.removeLast();
+    }
+}
+
+
+void MainWindow::on_actionRemove_Column_triggered()
+{
+    QModelIndexList selected = ui->tableView->selectionModel()->selectedColumns();
+    while (!selected.isEmpty()){
+        model->removeColumns(selected.last().column(),1);
+        selected.removeLast();
+    }
+
 }
 
