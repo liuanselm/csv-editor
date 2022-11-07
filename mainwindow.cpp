@@ -5,13 +5,15 @@
 #include <string>
 #include <QTextStream>
 #include <QElapsedTimer>
+#include <QTableView>
+#include <QStandardItemModel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    this->setCentralWidget(ui->tableWidget);
+    this->setCentralWidget(ui->tableView);
 }
 
 MainWindow::~MainWindow()
@@ -35,8 +37,8 @@ void MainWindow::on_actionOpen_triggered()
     int r = 0;
     int rowC = rowCount(fileName.toStdString());
     int colC = colCount(fileName.toStdString());
-    ui->tableWidget->setRowCount(rowC);
-    ui->tableWidget->setColumnCount(colC);
+    model = new QStandardItemModel(rowC,colC,this);
+    ui->tableView->setModel(model);
 
     while (!in.atEnd() && r < 10000){
         string currentLine = in.readLine().toStdString();
@@ -53,7 +55,8 @@ void MainWindow::on_actionOpen_triggered()
             }
             //reached the end of a cell, print cell value
             if (currentLine[i] == ',' && a == false){
-                ui->tableWidget->setItem(r,c,new QTableWidgetItem(tr("%1").arg(QString::fromStdString(cur))));
+                QModelIndex index = model->index(r,c,QModelIndex());
+                model->setData(index,cur.c_str());
                 cur = "";
                 c++;
             }
@@ -63,10 +66,39 @@ void MainWindow::on_actionOpen_triggered()
                 cur += currentLine[i];
             }
         }
-        ui->tableWidget->setItem(r,c,new QTableWidgetItem(tr("%1").arg(QString::fromStdString(cur))));
+        //appends the last value of each row to the table
+        QModelIndex index = model->index(r,c,QModelIndex());
+        model->setData(index,cur.c_str());
         r++;
     }
     std::cout << timer.elapsed() << std::endl;
+    file.close();
+}
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    QFile file(currentFile);
+    int rowC = model->rowCount();
+    int colC = model->columnCount();
+    if (file.open(QIODevice::ReadWrite | QFile::Text)){
+        QTextStream stream(&file);
+        for (int i = 0; i<rowC; i++){
+            for (int j = 0; j<colC; j++){
+                std::cout<<model->index(i, j).data().toString().toStdString()<<std::endl;
+                stream<<model->index(i, j).data().toString();
+                //checks if the cursor is on the last word, if so, don't add comma to end of word
+                if(j!=colC-1){
+                    stream<<",";
+                }
+            }
+            //after entire row is read, add new line
+            if (i != rowC-1){
+                stream<<"\n";
+            }
+        }
+    }
+
     file.close();
 }
 
