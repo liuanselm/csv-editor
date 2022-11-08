@@ -75,34 +75,38 @@ void MainWindow::on_actionOpen_triggered()
     file.close();
 }
 
-
+//saving function, works by iterating over table model and writing to file.
 void MainWindow::on_actionSave_triggered()
 {
-    QFile file(currentFile);
-    //clear contents of file to prevent overwriting errors
-    //eventually replace this with better method, this method could be dangerous
-    file.resize(0);
-    int rowC = model->rowCount();
-    int colC = model->columnCount();
-    if (file.open(QIODevice::ReadWrite | QFile::Text)){
-        QTextStream stream(&file);
-        for (int i = 0; i<rowC; i++){
-            for (int j = 0; j<colC; j++){
-                std::cout<<model->index(i, j).data().toString().toStdString()<<std::endl;
-                stream<<model->index(i, j).data().toString();
-                //checks if the cursor is on the last word, if so, don't add comma to end of word
-                if(j!=colC-1){
-                    stream<<",";
+    //quick solution to crashing when saving with no file open, implement more robust solution
+    if (currentFile != ""){
+        QFile file(currentFile);
+        //clear contents of file to prevent overwriting errors
+        //eventually replace this with better method, this method could be dangerous
+
+        file.resize(0);
+        int rowC = model->rowCount();
+        int colC = model->columnCount();
+        if (file.open(QIODevice::ReadWrite | QFile::Text)){
+            QTextStream stream(&file);
+            for (int i = 0; i<rowC; i++){
+                for (int j = 0; j<colC; j++){
+                    std::cout<<model->index(i, j).data().toString().toStdString()<<std::endl;
+                    stream<<model->index(i, j).data().toString();
+                    //checks if the cursor is on the last word, if so, don't add comma to end of word
+                    if(j!=colC-1){
+                        stream<<",";
+                    }
+                }
+                //after entire row is read, add new line
+                if (i != rowC-1){
+                    stream<<"\n";
                 }
             }
-            //after entire row is read, add new line
-            if (i != rowC-1){
-                stream<<"\n";
-            }
         }
-    }
 
-    file.close();
+        file.close();
+    }
 }
 
 
@@ -136,5 +140,12 @@ void MainWindow::on_actionRemove_Column_triggered()
         selected.removeLast();
     }
 
+}
+
+
+void MainWindow::on_actionNew_triggered()
+{
+    model = new QStandardItemModel(2,2,this);
+    ui->tableView->setModel(model);
 }
 

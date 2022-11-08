@@ -33,6 +33,8 @@ private slots:
 
     void on_actionRemove_Column_triggered();
 
+    void on_actionNew_triggered();
+
 private:
     Ui::MainWindow *ui;
     QString currentFile = "";
